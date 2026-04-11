@@ -31,19 +31,6 @@ bun run dev
 
 Opens at `http://localhost:5173`.
 
-## Build & Deploy
-
-```bash
-bun run build        # Build for production
-bun run deploy       # Deploy to GitHub Pages
-```
-
-## Tech Stack
-
-- React
-- Vite
-- Web Audio API
-- Web MIDI API
 
 ## Contact
 
@@ -51,8 +38,4 @@ abgtjjmka@mozmail.com
 
 ---
 
-*This tool is dedicated to the experimenters — the ones who treat music not as something to master, but as something to question. Studying, practicing are all in the discipline of craft. Some of the most important musical discoveries come from asking "what if I rearrange this?" or "what does it sound like backwards?"*
-
-*Every great tradition in music was once someone's weird experiment. Dub reggae was an engineer muting channels to see what remained. Musique concrète was a composer cutting tape with scissors. Hip-hop was two turntables and the space between breakbeats. These weren't accidents — they were mindful choices to listen differently.*
-
-*So slice, shuffle, shred. Break a song apart and put it back wrong. The mistakes you choose to keep are the beginning of your sound.*
+*This tool is dedicated to the people who experiment and show us new ways on our journey.*
