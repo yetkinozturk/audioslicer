@@ -1438,6 +1438,27 @@ export default function AudioSlicer() {
 
         {/* Status */}
         <div style={{ fontSize: 10, color: COLORS.textDim, letterSpacing: "0.04em" }}>{status}</div>
+
+        {/* About */}
+        <div style={{
+          marginTop: 40, paddingTop: 20,
+          borderTop: `1px solid ${COLORS.border}`,
+        }}>
+          <div style={{
+            fontSize: 12, color: COLORS.textDim, lineHeight: 1.8,
+            maxWidth: 620, opacity: 0.7,
+          }}>
+            <p style={{ marginBottom: 12 }}>
+              This tool is dedicated to the experimenters — the ones who treat music not as something to master, but as something to question. Studying, practicing are all in the discipline of craft. Some of the most important musical discoveries come from asking "what if I rearrange this?" or "what does it sound like backwards?"
+            </p>
+            <p style={{ marginBottom: 12 }}>
+              Every great tradition in music was once someone's weird experiment. Dub reggae was an engineer muting channels to see what remained. Musique concrète was a composer cutting tape with scissors. Hip-hop was two turntables and the space between breakbeats. These weren't accidents — they were mindful choices to listen differently.
+            </p>
+            <p style={{ marginBottom: 0 }}>
+              So slice, shuffle, shred. Break a song apart and put it back wrong. The mistakes you choose to keep are the beginning of your sound.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
