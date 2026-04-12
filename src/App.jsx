@@ -360,6 +360,7 @@ export default function AudioSlicer() {
   const [grooveGroups, setGrooveGroups] = useState(3); // number of energy bands for groove
   const [dillaGroups, setDillaGroups] = useState(2); // number of transient types for Spice
   const [shredderSize, setShredderSize] = useState(1); // block size for Shredder
+  const [fixedSize, setFixedSize] = useState("1"); // fixed slice duration in seconds
   const [activeKeys, setActiveKeys] = useState(new Set()); // currently pressed keys
   const [midiEnabled, setMidiEnabled] = useState(false);
   const [midiDeviceName, setMidiDeviceName] = useState("");
@@ -730,6 +731,39 @@ export default function AudioSlicer() {
     setSortMode("shredder");
     setStatus(`Shredder (block ${blockSize}): ${swapCount} swaps — adjacent blocks exchanged`);
   }, [slices, order, shredderSize, stopPlayback]);
+
+  const handleFixed = useCallback(() => {
+    if (!audioBuffer) return;
+    stopPlayback();
+    setStatus("Slicing at fixed intervals...");
+
+    const secs = parseFloat(fixedSize);
+    const sampleRate = audioBuffer.sampleRate;
+    const channelData = audioBuffer.getChannelData(0);
+    const totalSamples = channelData.length;
+    const sliceSamples = Math.floor(secs * sampleRate);
+
+    if (sliceSamples < 1) return;
+
+    const newSlices = [];
+    for (let start = 0; start < totalSamples; start += sliceSamples) {
+      const end = Math.min(start + sliceSamples, totalSamples);
+      const length = end - start;
+      const sliceBuffer = new Float32Array(length);
+      for (let j = 0; j < length; j++) {
+        sliceBuffer[j] = channelData[start + j];
+      }
+      newSlices.push({ data: sliceBuffer, originalIndex: newSlices.length, start, end, length });
+    }
+
+    const initialOrder = newSlices.map((_, i) => i);
+    setSlices(newSlices);
+    setOrder(initialOrder);
+    setIsShuffled(false);
+    setShuffleCount(0);
+    setSortMode(null);
+    setStatus(`Fixed slice: ${newSlices.length} slices at ${secs}s intervals`);
+  }, [audioBuffer, fixedSize, stopPlayback]);
 
   const getPlaybackBuffer = useCallback(() => {
     if (!audioBuffer) return null;
@@ -1163,6 +1197,32 @@ export default function AudioSlicer() {
           <button title="Detect transients and slice the audio into segments" onClick={handleSlice} disabled={!audioBuffer} style={btnStyle(false, true, !audioBuffer)}>
             Slice
           </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 0, opacity: !audioBuffer ? 0.35 : 1 }}>
+            <button title="Slice audio into equal fixed-length segments — ignores transients" onClick={handleFixed} disabled={!audioBuffer} style={{
+              ...btnStyle(false, true, !audioBuffer),
+              borderRight: "none", borderTopRightRadius: 0, borderBottomRightRadius: 0, opacity: 1,
+            }}>
+              Fixed
+            </button>
+            <select
+              title="Duration of each fixed slice in seconds"
+              value={fixedSize}
+              disabled={!audioBuffer}
+              onChange={e => setFixedSize(e.target.value)}
+              style={{
+                background: COLORS.surface,
+                color: !audioBuffer ? COLORS.textDim : COLORS.accent,
+                border: `1px solid ${COLORS.border}`,
+                borderLeft: "none", borderTopRightRadius: 2, borderBottomRightRadius: 2,
+                padding: "10px 6px", fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 10, cursor: !audioBuffer ? "not-allowed" : "pointer", outline: "none",
+              }}
+            >
+              {[["0.125","⅛s"],["0.25","¼s"],["0.5","½s"],["1","1s"],["2","2s"],["4","4s"],["8","8s"]].map(([val, label]) => (
+                <option key={val} value={val}>{label}</option>
+              ))}
+            </select>
+          </div>
           <div style={{ width: 1, height: 28, background: COLORS.border, margin: "0 2px" }} />
           <button title="Rewind 5 seconds" onClick={() => handleSeek(-5)} disabled={!audioBuffer} style={{
             ...btnStyle(false, false, !audioBuffer),
